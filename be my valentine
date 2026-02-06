@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Harshad, Will You Be My Valentine?</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #ffb6c1, #ffe4e1);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+    }
+    .card {
+      background: white;
+      padding: 3rem 2.5rem;
+      border-radius: 24px;
+      text-align: center;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+      max-width: 420px;
+      width: 90%;
+      position: relative;
+      z-index: 2;
+    }
+    h1 {
+      font-size: 2.1rem;
+      margin-bottom: 1rem;
+      color: #e63946;
+    }
+    p {
+      font-size: 1.1rem;
+      color: #444;
+      margin-bottom: 2rem;
+    }
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+    button {
+      border: none;
+      padding: 0.9rem 2rem;
+      border-radius: 999px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    button:hover {
+      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    }
+    .yes {
+      background: #e63946;
+      color: white;
+      font-size: 1.1rem;
+    }
+    .no {
+      background: #f1f1f1;
+      color: #555;
+    }
+    .heart {
+      font-size: 3.5rem;
+      margin-top: 1rem;
+      animation: pulse 1.2s infinite;
+      display: none;
+    }
+    .gif {
+      margin-top: 1.5rem;
+      display: none;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.25); }
+      100% { transform: scale(1); }
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="confetti"></canvas>
+
+<div class="card">
+  <h1>Harshad, will you be my Valentine? 💘</h1>
+  <p>I promise snacks, smiles, and minimal drama 😜</p>
+
+  <div class="buttons" id="buttons">
+    <button class="yes" id="yesBtn" onclick="sayYes()">Yes 💕</button>
+    <button class="no" id="noBtn" onclick="noClick()">No 🙈</button>
+  </div>
+
+  <div class="heart" id="heart">❤️</div>
+
+  <div class="gif" id="gif">
+    <video width="300" autoplay loop muted playsinline>
+      <source src="WhatsApp Video 2026-02-06 at 9.55.28 PM.mp4" type="video/mp4">
+    </video>
+  </div>
+</div>
+
+<iframe width="0" height="0" src="https://www.youtube.com/embed/1Hk7kYfYyGQ?autoplay=1&mute=1&loop=1&playlist=1Hk7kYfYyGQ" frameborder="0"></iframe>
+
+<script>
+  const yesBtn = document.getElementById('yesBtn');
+  const noBtn = document.getElementById('noBtn');
+
+  let yesScale = 1;
+  let noScale = 1;
+  let noIndex = 0;
+
+  const noTexts = [
+    'Are you sure?',
+    'Please 🥺',
+    'Pretty please 🥹',
+    'ilysm babes 💕',
+    'I’ll give you your fav gifts 🎁',
+    'It would be really nice to :(((',
+    'Please pookie 🧸'
+  ];
+
+  function noClick() {
+    if (noIndex < noTexts.length) {
+      noBtn.innerText = noTexts[noIndex];
+      noIndex++;
+    }
+
+    noScale -= 0.12;
+    if (noScale < 0.3) noScale = 0.3;
+    noBtn.style.transform = `scale(${noScale})`;
+
+    yesScale += 0.18;
+    yesBtn.style.transform = `scale(${yesScale})`;
+  }
+
+  function sayYes() {
+    document.querySelector('h1').innerText = 'YAYYYYY!!! 💖🥹';
+    document.querySelector('p').innerText = 'yayyyyyyyyyy i loveeee youuuu bubuuuuu';
+    document.getElementById('buttons').style.display = 'none';
+    document.getElementById('heart').style.display = 'block';
+    document.getElementById('gif').style.display = 'block';
+    startConfetti();
+  }
+
+  // Confetti
+  const canvas = document.getElementById('confetti');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const pieces = [];
+  function startConfetti() {
+    for (let i = 0; i < 200; i++) {
+      pieces.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        r: Math.random() * 6 + 4,
+        d: Math.random() * 50,
+        color: `hsl(${Math.random() * 360}, 100%, 70%)`
+      });
+    }
+    requestAnimationFrame(update);
+  }
+
+  function update() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      p.y += Math.cos(p.d) + 3;
+      ctx.beginPath();
+      ctx.fillStyle = p.color;
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    requestAnimationFrame(update);
+  }
+</script>
+</body>
+</html>
