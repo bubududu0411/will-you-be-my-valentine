@@ -25,6 +25,7 @@
       max-width: 420px;
       width: 90%;
       position: relative;
+      z-index: 2;
     }
     h1 {
       font-size: 2.1rem;
@@ -40,7 +41,6 @@
       display: flex;
       justify-content: center;
       gap: 1rem;
-      flex-wrap: wrap;
     }
     button {
       border: none;
@@ -48,76 +48,140 @@
       border-radius: 999px;
       font-size: 1rem;
       cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
     button:hover {
-      transform: translateY(-2px) scale(1.05);
       box-shadow: 0 10px 20px rgba(0,0,0,0.15);
     }
     .yes {
       background: #e63946;
       color: white;
+      font-size: 1.1rem;
     }
     .no {
       background: #f1f1f1;
       color: #555;
-      position: absolute;
     }
     .heart {
       font-size: 3.5rem;
-      margin-top: 1.5rem;
+      margin-top: 1rem;
       animation: pulse 1.2s infinite;
       display: none;
     }
-    .music {
+    .gif {
       margin-top: 1.5rem;
-      font-size: 0.9rem;
-      color: #777;
+      display: none;
     }
     @keyframes pulse {
       0% { transform: scale(1); }
       50% { transform: scale(1.25); }
       100% { transform: scale(1); }
     }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Harshad, will you be my Valentine? 💘</h1>
-    <p>I promise snacks, smiles, and zero drama (okay, minimal 😜)</p>
 
-    <div class="buttons" id="buttons">
-      <button class="yes" onclick="sayYes()">Yes 💕</button>
-      <button class="no" id="noBtn" onmouseover="moveNo()">No 🙈</button>
-    </div>
+<canvas id="confetti"></canvas>
 
-    <div class="heart" id="heart">❤️</div>
+<div class="card">
+  <h1>Harshad, will you be my Valentine? 💘</h1>
+  <p>I promise snacks, smiles, and minimal drama 😜</p>
 
-    <div class="music">
-      🎶 Best experienced with <br>
-      <strong>"Tune Kaha" – Prateek Kuhad</strong><br>
-      <a href="https://www.youtube.com/watch?v=1Hk7kYfYyGQ" target="_blank">Tap to play the song</a>
-    </div>
+  <div class="buttons" id="buttons">
+    <button class="yes" id="yesBtn" onclick="sayYes()">Yes 💕</button>
+    <button class="no" id="noBtn" onclick="noClick()">No 🙈</button>
   </div>
 
-  <!-- Hidden YouTube player for background vibe -->
-  <iframe width="0" height="0" src="https://www.youtube.com/embed/1Hk7kYfYyGQ?autoplay=1&mute=1&loop=1&playlist=1Hk7kYfYyGQ" frameborder="0"></iframe>
+  <div class="heart" id="heart">❤️</div>
 
-  <script>
-    const noBtn = document.getElementById('noBtn');
+  <div class="gif" id="gif">
+    <iframe src="https://giphy.com/embed/3oriO6qJiXajN0TyDu" width="300" height="300" frameBorder="0" allowFullScreen></iframe>
+  </div>
+</div>
 
-    function sayYes() {
-      document.querySelector('h1').innerText = 'YAY!! Best decision ever 🥹💖';
-      document.querySelector('p').innerText = 'Valentine’s Day is officially booked.';
-      document.getElementById('buttons').style.display = 'none';
-      document.getElementById('heart').style.display = 'block';
+<iframe width="0" height="0" src="https://www.youtube.com/embed/1Hk7kYfYyGQ?autoplay=1&mute=1&loop=1&playlist=1Hk7kYfYyGQ" frameborder="0"></iframe>
+
+<script>
+  const yesBtn = document.getElementById('yesBtn');
+  const noBtn = document.getElementById('noBtn');
+
+  let yesScale = 1;
+  let noScale = 1;
+  let noIndex = 0;
+
+  const noTexts = [
+    'Are you sure?',
+    'Please 🥺',
+    'Pretty please 🥹',
+    'ilysm babes 💕',
+    'I’ll give you your fav gifts 🎁',
+    'It would be really nice to :(((',
+    'Please pookie 🧸'
+  ];
+
+  function noClick() {
+    if (noIndex < noTexts.length) {
+      noBtn.innerText = noTexts[noIndex];
+      noIndex++;
     }
 
-    function moveNo() {
-      const x = Math.random() * 250 - 125;
-      const y = Math.random() * 200 - 100;
-      noBtn.style.transform = `translate(${x}px, ${y}px)`;
+    noScale -= 0.12;
+    if (noScale < 0.3) noScale = 0.3;
+    noBtn.style.transform = `scale(${noScale})`;
+
+    yesScale += 0.18;
+    yesBtn.style.transform = `scale(${yesScale})`;
+  }
+
+  function sayYes() {
+    document.querySelector('h1').innerText = 'YAYYYYY!!! 💖🥹';
+    document.querySelector('p').innerText = 'Okay this is officially my favourite answer.';
+    document.getElementById('buttons').style.display = 'none';
+    document.getElementById('heart').style.display = 'block';
+    document.getElementById('gif').style.display = 'block';
+    startConfetti();
+  }
+
+  // Confetti
+  const canvas = document.getElementById('confetti');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const pieces = [];
+  function startConfetti() {
+    for (let i = 0; i < 200; i++) {
+      pieces.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        r: Math.random() * 6 + 4,
+        d: Math.random() * 50,
+        color: `hsl(${Math.random() * 360}, 100%, 70%)`
+      });
     }
-  </script>
+    requestAnimationFrame(update);
+  }
+
+  function update() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      p.y += Math.cos(p.d) + 3;
+      ctx.beginPath();
+      ctx.fillStyle = p.color;
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    requestAnimationFrame(update);
+  }
+</script>
 </body>
 </html>
